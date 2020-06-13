@@ -30,9 +30,7 @@ Sharing a vertical swipe for turning pages and for scrolling elements of a parti
 
 Realization:
 
+<img src="screenshots/Screen_Recording.gif" width="300">
 
-<img width="200" controls>
-  <source src="screenshots/Screen_Recording.gif" >
-</img>
 
 
