@@ -30,7 +30,7 @@ Sharing a vertical swipe for turning pages and for scrolling elements of a parti
 
 Realization:
 
-![](screenshots/Screen_Recording.gif){ width=200 }
+![](screenshots/Screen_Recording.gif){width=200}
 
 <video width="200" controls>
   <source src="screenshots/Screen_Recording_2020-06-14_at_00-21-14.mov" type="video/mp4">
