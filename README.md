@@ -19,7 +19,21 @@ Exploring behavior PageView scrolling with bi-directional swipe with pages inclu
 
 Initial Requirements:
 Create a flexible interface with the ability to view the elements of a two-dimensional data array having an undefined number of elements containing the same undefined number of internal widgets located vertically.
+
+Sample map of screens:
+
+![](screenshots/PastedGraphic-1%20copy.png)
+
+
 Problem:
 Sharing a vertical swipe for turning pages and for scrolling elements of a particular viewed page. At the same time, the possibility of horizontal page turning should remain.
+
+Realization:
+
+![](screenshots/Screen_Recording.gif){ width=200 }
+
+<video width="200" controls>
+  <source src="screenshots/Screen_Recording_2020-06-14_at_00-21-14.mov" type="video/mp4">
+</video>
 
 
