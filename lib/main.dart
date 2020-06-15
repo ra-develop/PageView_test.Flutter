@@ -123,29 +123,29 @@ class _ExampleState extends State<Example> {
   Widget build(BuildContext context) {
     return 
     GestureDetector(
-      onVerticalDragStart: _handleDragStart,
-      onVerticalDragUpdate: _handleDragUpdate,
-      onVerticalDragEnd: _handleDragEnd,
-      onVerticalDragCancel: _handleDragCancel,
+        onVerticalDragStart: _handleDragStart,
+        onVerticalDragUpdate: _handleDragUpdate,
+        onVerticalDragEnd: _handleDragEnd,
+        onVerticalDragCancel: _handleDragCancel,
 
-      // onHorizontalDragStart: _handleDragStart,
-      // onHorizontalDragUpdate: _handleDragUpdate,
-      // onHorizontalDragEnd: _handleDragEnd,
-      // onHorizontalDragCancel: _handleDragCancel,
+        // onHorizontalDragStart: _handleDragStart,
+        // onHorizontalDragUpdate: _handleDragUpdate,
+        // onHorizontalDragEnd: _handleDragEnd,
+        // onHorizontalDragCancel: _handleDragCancel,
 
-      behavior: HitTestBehavior.opaque,
-      child: 
-      PageView.builder(
-        controller: _pageController,
-        scrollDirection: Axis.vertical,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return PageRowWidget(verticalIndex: index,);
-        },
-        itemCount: 10,
-      pageSnapping: false,
-      )
-    );
+        behavior: HitTestBehavior.opaque,
+        child: 
+        PageView.builder(
+          controller: _pageController,
+          scrollDirection: Axis.vertical,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+    return PageRowWidget(verticalIndex: index,);
+          },
+          itemCount: 10,
+        pageSnapping: false,
+        )
+      );
   }
 
 }
@@ -183,18 +183,21 @@ class _PageRowWidgetState extends State<PageRowWidget> {
   @override
   Widget build(BuildContext context) {
     return 
-    PageView.builder(
-        controller: _pageController,
-        scrollDirection: Axis.horizontal, 
-        itemBuilder: (BuildContext context, int index) { 
-          // if (Random().nextInt(1) == 0) {
-            return MyListWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
-          // } else {
-            // return MyWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
-          // }
-        },
-        itemCount: 5,
-      );
+    Container(
+      padding: EdgeInsets.all(10.0),
+      child: PageView.builder(
+            controller: _pageController,
+            scrollDirection: Axis.horizontal, 
+            itemBuilder: (BuildContext context, int index) { 
+      // if (Random().nextInt(1) == 0) {
+        return MyListWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
+      // } else {
+        // return MyWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
+      // }
+            },
+            itemCount: 5,
+          ),
+    );
   }
 }
 
@@ -240,32 +243,40 @@ class _MyListWidgetState extends State<MyListWidget> {
     }
     return 
 
-    ListView(
-              controller: _listScrollController,
-            physics: const NeverScrollableScrollPhysics(),
-      children: <Widget>[
-        Row(
-          children: [
-            MyBox(baseColor[300], 
-            text: "ListViewWidget",
-            height: 50),
-          ],
+    Container(
+      padding: EdgeInsets.all(5.0),
+      decoration: BoxDecoration(
+        color: baseColor,
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+        boxShadow: [BoxShadow(color: Colors.grey[100])],
         ),
-        Row(
-          children: [
-            MyBox(baseColor[300]),
-            MyBox(baseColor[300]),
-          ],
-        ),
-        MyBox(baseColor[600], 
-              text: 'Idexes: Vertical: ${widget.verticalIndex}, Horizontal: ${widget.hotizontalIndex}'),
-        Column(
-          children: listElements,
-        
-        ),
-        //   },
-        // ),
-      ],
+      child: ListView(
+                controller: _listScrollController,
+              physics: const NeverScrollableScrollPhysics(),
+        children: <Widget>[
+          Row(
+            children: [
+              MyBox(baseColor[300], 
+              text: "ListViewWidget",
+              height: 50),
+            ],
+          ),
+          Row(
+            children: [
+              MyBox(baseColor[300]),
+              MyBox(baseColor[300]),
+            ],
+          ),
+          MyBox(baseColor[600], 
+                text: 'Idexes: Vertical: ${widget.verticalIndex}, Horizontal: ${widget.hotizontalIndex}'),
+          Column(
+            children: listElements,
+          
+          ),
+          //   },
+          // ),
+        ],
+      ),
     );
   }
 }
