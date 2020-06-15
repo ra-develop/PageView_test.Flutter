@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -66,6 +68,10 @@ class _ExampleState extends State<Example> {
   }
 
 
+
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+
     // print('StartReconizing:');
     // print('delta.direction: ${details.delta.direction}');
     // print('delta.distance: ${details.delta.distance}');
@@ -79,7 +85,6 @@ class _ExampleState extends State<Example> {
     // print(_activeScrollController.position.pixels.roundToDouble());
     // print(_activeScrollController.position.maxScrollExtent.roundToDouble());
 
-  void _handleDragUpdate(DragUpdateDetails details) {
     if (_activeScrollController == _listScrollController 
     // && (details.primaryDelta < 0) 
     && (_activeScrollController.position.pixels.roundToDouble() >= _activeScrollController.position.maxScrollExtent.roundToDouble()
@@ -118,25 +123,6 @@ class _ExampleState extends State<Example> {
   Widget build(BuildContext context) {
     return 
     GestureDetector(
-    // RawGestureDetector(
-    //   gestures: <Type, GestureRecognizerFactory>{
-    //     PanGestureRecognizer: GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
-    //       // VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<VerticalDragGestureRecognizer>(
-    //       () => PanGestureRecognizer(),
-    //       // () => VerticalDragGestureRecognizer(),
-    //       (PanGestureRecognizer instance) {
-    //       // (VerticalDragGestureRecognizer instance) {
-    //         instance 
-    //           // .. onStart = _handlerMultiDrag
-    //           ..onStart = _handleDragStart
-    //           ..onUpdate = _handleDragUpdate
-    //           ..onEnd = _handleDragEnd
-    //           ..onCancel = _handleDragCancel
-    //           ;
-    //       }
-    //       )
-    //   },
-
       onVerticalDragStart: _handleDragStart,
       onVerticalDragUpdate: _handleDragUpdate,
       onVerticalDragEnd: _handleDragEnd,
@@ -157,6 +143,7 @@ class _ExampleState extends State<Example> {
           return PageRowWidget(verticalIndex: index,);
         },
         itemCount: 10,
+      pageSnapping: false,
       )
     );
   }
@@ -177,6 +164,22 @@ class PageRowWidget extends StatefulWidget {
 
 class _PageRowWidgetState extends State<PageRowWidget> {
   PageController _pageController;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    // _listScrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    // _listScrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return 
@@ -184,10 +187,11 @@ class _PageRowWidgetState extends State<PageRowWidget> {
         controller: _pageController,
         scrollDirection: Axis.horizontal, 
         itemBuilder: (BuildContext context, int index) { 
-          if (index == 1 || index == 3) {
+          // if (Random().nextInt(1) == 0) {
             return MyListWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
-          }
-          return MyWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
+          // } else {
+            // return MyWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
+          // }
         },
         itemCount: 5,
       );
@@ -195,47 +199,9 @@ class _PageRowWidgetState extends State<PageRowWidget> {
 }
 
 
-class MyWidget extends StatefulWidget {
-  final int verticalIndex;
-  final int hotizontalIndex;
-
-  const MyWidget({Key key, this.verticalIndex, this.hotizontalIndex}) : super(key: key);
-
-  @override
-  _MyWidgetState createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: [
-            MyBox(darkGreen, height: 50),
-          ],
-        ),
-        Row(
-          children: [
-            MyBox(lightGreen),
-            MyBox(lightGreen),
-          ],
-        ),
-        MyBox(mediumGreen, 
-              text: 'Idexes: Vertical: ${widget.verticalIndex}, Horizontal: ${widget.hotizontalIndex}'),
-        Row(
-          children: [
-            MyBox(lightGreen, height: 200),
-            MyBox(lightGreen, height: 200),
-          ],
-        ),
-      ],
-    );
-  }
-}
 
 class MyListWidget extends StatefulWidget {
-
+  
   final int verticalIndex;
   final int hotizontalIndex;
 
@@ -246,71 +212,79 @@ class MyListWidget extends StatefulWidget {
 }
 
 class _MyListWidgetState extends State<MyListWidget> {
+  final int rngList = 1 + Random().nextInt(10);
+
+  List<ElementOfList> listElements =[];
+
+  final baseColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+
+
+  @override
+  void initState() {
+    super.initState();
+    // _pageController = PageController();
+    _listScrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    // _pageController.dispose();
+    _listScrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    for (var i = 0; i < rngList; i++) {
+      listElements.add(ElementOfList(color: baseColor));
+    }
     return 
+
     ListView(
               controller: _listScrollController,
             physics: const NeverScrollableScrollPhysics(),
       children: <Widget>[
         Row(
           children: [
-            MyBox(darkBlue, 
+            MyBox(baseColor[300], 
             text: "ListViewWidget",
             height: 50),
           ],
         ),
         Row(
           children: [
-            MyBox(lightBlue),
-            MyBox(lightBlue),
+            MyBox(baseColor[300]),
+            MyBox(baseColor[300]),
           ],
         ),
-        MyBox(mediumBlue, 
+        MyBox(baseColor[600], 
               text: 'Idexes: Vertical: ${widget.verticalIndex}, Horizontal: ${widget.hotizontalIndex}'),
-        Row(
-          children: [
-            MyBox(lightBlue),
-            MyBox(lightBlue),
-          ],
+        Column(
+          children: listElements,
+        
         ),
-        Row(
-          children: [
-            MyBox(lightBlue),
-            MyBox(lightBlue),
-          ],
-        ),
-                Row(
-          children: [
-            MyBox(lightBlue),
-            MyBox(lightBlue),
-          ],
-        ),
-                Row(
-          children: [
-            MyBox(lightBlue),
-            MyBox(lightBlue),
-          ],
-        ),
-                Row(
-          children: [
-            MyBox(lightBlue),
-            MyBox(lightBlue),
-          ],
-        ),
+        //   },
+        // ),
       ],
     );
   }
 }
 
+class ElementOfList extends StatelessWidget {
+final color;
 
-const lightBlue = Color(0xff00bbff);
-const mediumBlue = Color(0xff00a2fc);
-const darkBlue = Color(0xff0075c9);
+  const ElementOfList({Key key, this.color}) : super(key: key);
 
-final lightGreen = Colors.green.shade300;
-final mediumGreen = Colors.green.shade600;
-final darkGreen = Colors.green.shade900;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+              children: [
+                MyBox(color[900]),
+                MyBox(color[900]),
+              ],
+            );
+  }
+}
 
 
 class MyBox extends StatelessWidget {
@@ -322,6 +296,7 @@ class MyBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return 
     Expanded(
       flex: 1,
