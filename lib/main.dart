@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:flutter/gestures.dart';
@@ -12,28 +11,18 @@ ScrollController _activeScrollController;
 Drag _drag;
 
 class App extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(),
-        body: Example()
-      )
-    );
+    return MaterialApp(home: Scaffold(appBar: AppBar(), body: Example()));
   }
-
 }
 
 class Example extends StatefulWidget {
-
   @override
   _ExampleState createState() => _ExampleState();
-
 }
 
 class _ExampleState extends State<Example> {
-
   PageController _pageController;
   // ScrollController _listScrollController;
   // ScrollController _activeScrollController;
@@ -43,36 +32,42 @@ class _ExampleState extends State<Example> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    _listScrollController = ScrollController();
+    // _listScrollController = ScrollController();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _listScrollController.dispose();
+    // _listScrollController.dispose();
     super.dispose();
   }
 
   void _handleDragStart(DragStartDetails details) {
-    if (_listScrollController.hasClients && 
+    if (_listScrollController.hasClients &&
         _listScrollController.position.context.storageContext != null) {
-      final RenderBox renderBox = _listScrollController.position.context.storageContext.findRenderObject();
-      if (renderBox.paintBounds.shift(renderBox.localToGlobal(Offset.zero)).contains(details.globalPosition)) {
-        _activeScrollController = _listScrollController;
-        _drag = _activeScrollController.position.drag(details, _disposeDrag);
-        return;
-      }
+        final RenderBox renderBox = _listScrollController
+              .position.context.storageContext
+              .findRenderObject();
+        if (renderBox.paintBounds
+              .shift(renderBox.localToGlobal(Offset.zero))
+              .contains(details.globalPosition)) {
+          print("_activeController is _listController");
+          _activeScrollController = _listScrollController;
+          _drag = _activeScrollController.position.drag(details, _disposeDrag);
+          return;
+        }
     }
+    print("_activeController is _pageController");
     _activeScrollController = _pageController;
     _drag = _pageController.position.drag(details, _disposeDrag);
   }
 
-
-
-
   void _handleDragUpdate(DragUpdateDetails details) {
 
-    // print('StartReconizing:');
+
+    // print('==================');
+    // print("DragUpdateDetails:");
+    // print(_activeScrollController == _pageController);
     // print('delta.direction: ${details.delta.direction}');
     // print('delta.distance: ${details.delta.distance}');
     // print('delta.distanceSquared: ${details.delta.distanceSquared}');
@@ -84,20 +79,27 @@ class _ExampleState extends State<Example> {
     // print('globalPosition: ${details.globalPosition}');
     // print(_activeScrollController.position.pixels.roundToDouble());
     // print(_activeScrollController.position.maxScrollExtent.roundToDouble());
+    // print(_activeScrollController.position.minScrollExtent.roundToDouble());
 
-    if (_activeScrollController == _listScrollController 
-    // && (details.primaryDelta < 0) 
-    && (_activeScrollController.position.pixels.roundToDouble() >= _activeScrollController.position.maxScrollExtent.roundToDouble()
-    || _activeScrollController.position.pixels <0 )) {
+
+    if (_activeScrollController == _listScrollController
+        // && (details.primaryDelta < 0)
+        &&
+        (_activeScrollController.position.pixels.roundToDouble() >=
+                _activeScrollController.position.maxScrollExtent
+                    .roundToDouble()) 
+                    ||
+            (_activeScrollController.position.pixels <= _activeScrollController.position.minScrollExtent 
+            && details.delta.dy > 0
+            )
+            ) {
       _activeScrollController = _pageController;
       _drag?.cancel();
       _drag = _pageController.position.drag(
-        DragStartDetails(
-          globalPosition: details.globalPosition,
-          localPosition: details.localPosition
-        ),
-        _disposeDrag
-      );
+          DragStartDetails(
+              globalPosition: details.globalPosition,
+              localPosition: details.localPosition),
+          _disposeDrag);
     }
     _drag?.update(details);
   }
@@ -114,15 +116,10 @@ class _ExampleState extends State<Example> {
     _drag = null;
   }
 
-  Drag _handlerMultiDrag(Offset offset) {
-    print(offset);
-  }
-
 
   @override
   Widget build(BuildContext context) {
-    return 
-    GestureDetector(
+    return GestureDetector(
         onVerticalDragStart: _handleDragStart,
         onVerticalDragUpdate: _handleDragUpdate,
         onVerticalDragEnd: _handleDragEnd,
@@ -134,29 +131,25 @@ class _ExampleState extends State<Example> {
         // onHorizontalDragCancel: _handleDragCancel,
 
         behavior: HitTestBehavior.opaque,
-        child: 
-        PageView.builder(
+        child: PageView.builder(
           controller: _pageController,
           scrollDirection: Axis.vertical,
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-    return PageRowWidget(verticalIndex: index,);
+            return PageRowWidget(
+              verticalIndex: index,
+            );
           },
           itemCount: 10,
-        pageSnapping: false,
-        )
-      );
+          pageSnapping: false,
+        ));
   }
-
 }
 
-
 class PageRowWidget extends StatefulWidget {
-
   final int verticalIndex;
 
   const PageRowWidget({Key key, this.verticalIndex}) : super(key: key);
-
 
   @override
   _PageRowWidgetState createState() => _PageRowWidgetState();
@@ -164,7 +157,6 @@ class PageRowWidget extends StatefulWidget {
 
 class _PageRowWidgetState extends State<PageRowWidget> {
   PageController _pageController;
-
 
   @override
   void initState() {
@@ -182,33 +174,30 @@ class _PageRowWidgetState extends State<PageRowWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Container(
-      padding: EdgeInsets.all(10.0),
-      child: PageView.builder(
-            controller: _pageController,
-            scrollDirection: Axis.horizontal, 
-            itemBuilder: (BuildContext context, int index) { 
-      // if (Random().nextInt(1) == 0) {
-        return MyListWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
-      // } else {
+    return PageView.builder(
+      controller: _pageController,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (BuildContext context, int index) {
+        // if (Random().nextInt(1) == 0) {
+        return MyListWidget(
+          verticalIndex: widget.verticalIndex,
+          hotizontalIndex: index,
+        );
+        // } else {
         // return MyWidget(verticalIndex: widget.verticalIndex, hotizontalIndex: index,);
-      // }
-            },
-            itemCount: 5,
-          ),
+        // }
+      },
+      itemCount: 5,
     );
   }
 }
 
-
-
 class MyListWidget extends StatefulWidget {
-  
   final int verticalIndex;
   final int hotizontalIndex;
 
-  const MyListWidget({Key key, this.verticalIndex, this.hotizontalIndex}) : super(key: key);
+  const MyListWidget({Key key, this.verticalIndex, this.hotizontalIndex})
+      : super(key: key);
 
   @override
   _MyListWidgetState createState() => _MyListWidgetState();
@@ -217,10 +206,9 @@ class MyListWidget extends StatefulWidget {
 class _MyListWidgetState extends State<MyListWidget> {
   final int rngList = 1 + Random().nextInt(10);
 
-  List<ElementOfList> listElements =[];
+  List<ElementOfList> listElements = [];
 
   final baseColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-
 
   @override
   void initState() {
@@ -231,9 +219,9 @@ class _MyListWidgetState extends State<MyListWidget> {
 
   @override
   void dispose() {
+    super.dispose();
     // _pageController.dispose();
     _listScrollController.dispose();
-    super.dispose();
   }
 
   @override
@@ -241,62 +229,70 @@ class _MyListWidgetState extends State<MyListWidget> {
     for (var i = 0; i < rngList; i++) {
       listElements.add(ElementOfList(color: baseColor));
     }
-    return 
-
-    Container(
-      padding: EdgeInsets.all(5.0),
-      decoration: BoxDecoration(
-        color: baseColor,
-        borderRadius: BorderRadius.all(Radius.circular(15)),
-        boxShadow: [BoxShadow(color: Colors.grey[100])],
+    return Padding(
+      padding: EdgeInsets.all(15),
+      child: Container(
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: baseColor,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+                color: baseColor.withOpacity(0.6),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 1))
+          ],
         ),
-      child: ListView(
-                controller: _listScrollController,
-              physics: const NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          Row(
-            children: [
-              MyBox(baseColor[300], 
-              text: "ListViewWidget",
-              height: 50),
-            ],
-          ),
-          Row(
-            children: [
-              MyBox(baseColor[300]),
-              MyBox(baseColor[300]),
-            ],
-          ),
-          MyBox(baseColor[600], 
-                text: 'Idexes: Vertical: ${widget.verticalIndex}, Horizontal: ${widget.hotizontalIndex}'),
-          Column(
-            children: listElements,
-          
-          ),
-          //   },
-          // ),
-        ],
+        child: ListView(
+          controller: _listScrollController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            Row(
+              children: [
+                MyBox(baseColor[300], text: "ListViewWidget", height: 50),
+              ],
+            ),
+            Row(
+              children: [
+                MyBox(baseColor[300]),
+                MyBox(baseColor[300]),
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                MyBox(baseColor[600],
+                    text:
+                        'Idexes: Vertical: ${widget.verticalIndex}, Horizontal: ${widget.hotizontalIndex}'),
+              ],
+            ),
+            Column(
+              children: listElements,
+            ),
+            //   },
+            // ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class ElementOfList extends StatelessWidget {
-final color;
+  final color;
 
   const ElementOfList({Key key, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
-              children: [
-                MyBox(color[900]),
-                MyBox(color[900]),
-              ],
-            );
+      children: [
+        MyBox(color[900]),
+        MyBox(color[900]),
+      ],
+    );
   }
 }
-
 
 class MyBox extends StatelessWidget {
   final Color color;
@@ -307,26 +303,23 @@ class MyBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return 
-    Expanded(
+    return Expanded(
       flex: 1,
-      child: 
-      Container(
+      child: Container(
         margin: EdgeInsets.all(10),
         color: color,
         height: (height == null) ? 150 : height,
         child: (text == null)
             ? null
             : Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize:25,
-              color: Colors.white,
-            ),
-          ),
-        ),
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
       ),
     );
   }
